@@ -1,3 +1,30 @@
+> [!NOTE]
+> This fork of `NVIDIA device plugin for Kubernetes` allows exposing GPU indices by renaming devices through configuration, e.g.
+>
+> ```yaml
+> version: v1
+> flags:
+>   migStrategy: none
+> sharing:
+>   timeSlicing:
+>     renameByDefault: false
+>     failRequestsGreaterThanOne: false
+>     resources:
+>     - name: nvidia.com/gpu
+>       rename: nvidia.com/gpu-0
+>       devices:
+>       - "0"
+>       replicas: 8
+>     - name: nvidia.com/gpu
+>       rename: nvidia.com/gpu-1
+>       devices:
+>       - "1"
+>       replicas: 8
+> ```
+>
+> To build the docker images (by default it will build $VERSION and $VERSION-$DIST):
+> `make -f deployments/container/Makefile build REGISTRY=example.com VERSION=x.y.z`
+
 # NVIDIA device plugin for Kubernetes
 
 [![End-to-end Tests](https://github.com/NVIDIA/k8s-device-plugin/actions/workflows/e2e.yaml/badge.svg)](https://github.com/NVIDIA/k8s-device-plugin/actions/workflows/e2e.yaml) [![Go Report Card](https://goreportcard.com/badge/github.com/NVIDIA/k8s-device-plugin)](https://goreportcard.com/report/github.com/NVIDIA/k8s-device-plugin) [![Latest Release](https://img.shields.io/github/v/release/NVIDIA/k8s-device-plugin)](https://github.com/NVIDIA/k8s-device-plugin/releases/latest)
