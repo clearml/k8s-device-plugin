@@ -22,7 +22,6 @@ import (
 	"os"
 
 	cli "github.com/urfave/cli/v2"
-	"k8s.io/klog/v2"
 
 	"sigs.k8s.io/yaml"
 )
@@ -83,17 +82,6 @@ func NewConfig(c *cli.Context, flags []cli.Flag) (*Config, error) {
 // DisableResourceNamingInConfig temporarily disable the resource renaming feature of the plugin.
 // This may be reenabled in a future release.
 func DisableResourceNamingInConfig(config *Config) {
-	// Disable resource renaming through config.Resource
-	if len(config.Resources.GPUs) > 0 || len(config.Resources.MIGs) > 0 {
-		klog.Warning("Customizing the 'resources' field is not yet supported in the config. Ignoring...")
-	}
-	config.Resources.GPUs = nil
-	config.Resources.MIGs = nil
-
-	// Disable renaming / device selection in Sharing.TimeSlicing.Resources
-	config.Sharing.TimeSlicing.disableResoureRenaming("timeSlicing")
-	// Disable renaming / device selection in Sharing.MPS.Resources
-	config.Sharing.MPS.disableResoureRenaming("mps")
 }
 
 // parseConfig parses a config file as either YAML of JSON and unmarshals it into a Config struct.
