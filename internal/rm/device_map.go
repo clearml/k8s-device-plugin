@@ -297,6 +297,8 @@ func updateDeviceMapWithReplicas(replicatedResources *spec.ReplicatedResources, 
 		}
 	}
 
+	renamedIds := make(map[spec.ResourceName][]string)
+
 	// Walk shared Resources and update devices in the device map as appropriate.
 	for _, resource := range replicatedResources.Resources {
 		r := resource
@@ -310,10 +312,8 @@ func updateDeviceMapWithReplicas(replicatedResources *spec.ReplicatedResources, 
 			continue
 		}
 
-		// Add any devices we don't want replicated directly into the device map.
-		for _, d := range oDevices[r.Name].Difference(oDevices[r.Name].Subset(ids)) {
-			devices.insert(r.Name, d)
-		}
+		// Add any device ids we replicated into a map of handled ids.
+		renamedIds[r.Name] = append(renamedIds[r.Name], ids...)
 
 		// Create replicated devices add them to the device map.
 		// Rename the resource for replicated devices as requested.
@@ -329,6 +329,12 @@ func updateDeviceMapWithReplicas(replicatedResources *spec.ReplicatedResources, 
 				replicatedDevice.Replicas = r.Replicas
 				devices.insert(name, &replicatedDevice)
 			}
+		}
+	}
+
+	for deviceName, ids := range renamedIds {
+		for _, d := range oDevices[deviceName].Difference(oDevices[deviceName].Subset(ids)) {
+			devices.insert(deviceName, d)
 		}
 	}
 
